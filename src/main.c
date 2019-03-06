@@ -47,8 +47,8 @@ void configureButtonGPIOForInterrupt() {
 }
 
 void enableButtonInterrupt() {
-    P2IFG = 0;                          // Clear all P1 interrupt flags
-    P2IE |= BIT3;                       // P1.3 interrupt enabled
+    P2IFG = 0;                          // Clear all P2 interrupt flags
+    P2IE |= BIT3;                       // P2.3 interrupt enabled
 }
 
 
@@ -302,6 +302,12 @@ int main(void)
      *  This is equivalent to __bis_SR_register(LPM4_bits | GIE);
      */
     _low_power_mode_4();
+
+    /*
+     * If we get here, we failed to enter LPM4.5.
+     * If we did entern LPM4.5, the continuation is a reset.
+     */
+    assert(false);
 
 }
 
