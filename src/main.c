@@ -37,7 +37,9 @@ void unlockLPM5() {
  *
  * There is no separate interrupt clearing method:  see below, no ISR is called.
  */
+#ifdef __MSP430FR2433__
 void configureButtonGPIOForInterrupt() {
+
     P2DIR &= ~(BIT3);                   // input direction
     P2OUT |= BIT3;                      // pull is up
     P2REN |= BIT3;                      // pull-up enable
@@ -50,6 +52,22 @@ void enableButtonInterrupt() {
     P2IFG = 0;                          // Clear all P2 interrupt flags
     P2IE |= BIT3;                       // P2.3 interrupt enabled
 }
+#else
+void configureButtonGPIOForInterrupt() {
+
+    P1DIR &= ~(BIT1);                   // input direction
+    P1OUT |= BIT1;                      // pull is up
+    P1REN |= BIT1;                      // pull-up enable
+    P1IES |= BIT1;                      // Hi to Low edge
+
+    // Button configured but interrupt not enabled.
+}
+
+void enableButtonInterrupt() {
+    P1IFG = 0;                          // Clear all P1 interrupt flags
+    P1IE |= BIT1;                       // interrupt enabled
+}
+#endif
 
 
 
@@ -62,9 +80,15 @@ void blinkRedLed() {
 }
 
 void blinkGreenLed() {
+#ifdef __MSP430FR2433__
     P1OUT |= BIT1;
     __delay_cycles(200000); // 0.2 seconds at 1Mhz clock
     P1OUT &= ~(BIT1);
+#else
+    P9OUT |= BIT7;
+    __delay_cycles(200000); // 0.2 seconds at 1Mhz clock
+    P9OUT &= ~(BIT7);
+#endif
 }
 
 //  P1OUT ^= BIT0;                      // P1.0 = toggle
@@ -131,8 +155,9 @@ bool isResetAWakeFromSleep() {
 
     case SYSRSTIV_PERF:      // peripheral/config area fetch
     case SYSRSTIV_PMMPW:     // PMM Password violation
+#ifdef __MSP430FR2433__
     case SYSRSTIV_FLLUL:     // FLL unlock
-
+#endif
     default:
       assert(false);
       break;
@@ -195,7 +220,9 @@ bool isResetNotFromWake() {
 
     case SYSRSTIV_PERF:      // peripheral/config area fetch
     case SYSRSTIV_PMMPW:     // PMM Password violation
+#ifdef __MSP430FR2433__
     case SYSRSTIV_FLLUL:     // FLL unlock
+#endif
 
     default:
       assert(false);
@@ -220,12 +247,14 @@ int main(void)
     // vacant memory generate interrupt as well as read and execute funny
     SFRIE1 |= VMAIE;
 
+#ifdef __MSP430FR2433__
     // BSL memory behave as vacant memory
     SYSBSLC |= SYSBSLOFF;
 
 
     // RTC is not counting
     assert(RTCCTL == 0);
+#endif
 
     /*
      * A reset occurred and the config registers of GPIO define them as inputs.
