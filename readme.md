@@ -25,7 +25,9 @@ So you can't use EnergyTrace to confirm that you are actually using the least po
 Specifics
 ---------
 
-    - As coded, is specific to the EXP-MSP430FR2433 LaunchPad dev kit.
+    - As coded, is specific to
+    -- EXP-MSP430FR2433 LaunchPad dev kit.
+    -- or EXP-MSP430FR6989 LaunchPad dev kit (supports EnergyTrace++)
     - I used the free, TI provided Code Composer Studio (CCS v8), an IDE base on Eclipse.
     - Language is C.
 
@@ -46,6 +48,8 @@ The green LED lights, but the red LED does not light when you press the button, 
 
 Using EnergyTrace, you should see a relatively high pulse when the program starts and when you push the button (the energy for the active cpu and to light the LED.)
 Except when you use "Free Run."
+
+EnergyTrace++ presents more information.  But as of this writing, it seems to show a spurious or unexplained period of one second in LPM4?
 
 
 
