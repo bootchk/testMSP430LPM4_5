@@ -331,6 +331,7 @@ int main(void)
      *  This is equivalent to __bis_SR_register(LPM4_bits | GIE);
      */
     _low_power_mode_4();
+    //_low_power_mode_3();
 
     /*
      * If we get here, we failed to enter LPM4.5.
@@ -352,13 +353,20 @@ int main(void)
  *
  * Even the button interrupt is not called (although we enable it.)
  * See the design for waking from sleep.
+ *
+ * 27-41 for FR6989
  */
-#pragma vector=   41, 42, 43, 44, 45, 46, \
+#pragma vector=   \
+27, 28, 29, 30, 31, 32, \
+33, 34, 35, 36, 37, 38, \
+39, 40, 41, \
+42, 43, 44, 45, 46, \
 47, 48, 49, 50, 51, 52, \
 53, 54, 55, 56, 57, 58
 __interrupt void ISR_TRAP(void)
 {
     blinkGreenLed();
-    // Since we did not clear the IFG, this will reoccur
+    // Since we did not clear the IFG, this will reoccur??
+    while(true) ;
 }
 
